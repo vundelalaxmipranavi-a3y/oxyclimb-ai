@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OxyClimb AI – Prototype</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>OxyClimb AI – working prototype</h1>
+  <p>A simulated climber unit. Drag the sensor sliders or run a scenario. The risk check runs in this page with no internet, the watch reacts, and a red alert sends a radio SOS to the receivers.</p>
+</header>
+
+<main>
+  <section aria-labelledby="h-sensors">
+    <h2 id="h-sensors">1. Climber unit: sensors</h2>
+    <div class="row"><label for="o2">Surrounding oxygen <output id="o2v"></output></label>
+      <input id="o2" type="range" min="6" max="21" step="0.1" value="20.9"></div>
+    <div class="row"><label for="cyl">Cylinder oxygen left <output id="cylv"></output></label>
+      <input id="cyl" type="range" min="0" max="100" step="1" value="80"></div>
+    <div class="row"><label for="hr">Heart rate <output id="hrv"></output></label>
+      <input id="hr" type="range" min="30" max="200" step="1" value="75"></div>
+    <div class="row"><label for="spo2">Pulse oxygen (SpO₂) <output id="spo2v"></output></label>
+      <input id="spo2" type="range" min="70" max="100" step="1" value="97"></div>
+    <h2 style="margin-top:16px">Run a scenario</h2>
+    <div class="btns" id="scen">
+      <button data-s="normal">Normal climb</button>
+      <button data-s="leak">Cylinder leak</button>
+      <button data-s="altitude">Climbing higher</button>
+      <button data-s="heart">Heart rate spike</button>
+      <button data-s="combo">Everything goes wrong</button>
+    </div>
+    <p class="status">Scenarios change the sensor values every second, just like real sensors would.</p>
+  </section>
+
+  <section aria-labelledby="h-brain">
+    <h2 id="h-brain">2. Control unit: on-device risk check</h2>
+    <table class="tbl" aria-label="Thresholds">
+      <tr><th>Reading</th><th>Yellow</th><th>Red</th></tr>
+      <tr><td>Surrounding O₂</td><td>below 16%</td><td>below 12%</td></tr>
+      <tr><td>Cylinder</td><td>below 30%</td><td>below 15%</td></tr>
+      <tr><td>Heart rate</td><td>above 120 or below 50</td><td>above 150 or below 40</td></tr>
+      <tr><td>SpO₂</td><td>below 90%</td><td>below 85%</td></tr>
+      <tr><td>Trend</td><td colspan="2">Yellow if a reading is projected to hit red within 30 s</td></tr>
+    </table>
+    <p class="why" id="why" aria-live="polite"></p>
+    <h2 style="margin-top:14px">Mode</h2>
+    <div class="seg">
+      <button id="solo" class="on">Solo</button>
+      <button id="team">Team</button>
+    </div>
+    <p class="status" id="modeNote"></p>
+    <h2 style="margin-top:14px">Last radio packet</h2>
+    <div class="pkt" id="pkt">No SOS sent yet.</div>
+  </section>
+
+  <section aria-labelledby="h-watch">
+    <h2 id="h-watch">3. Smartwatch (Bluetooth link)</h2>
+    <div class="watchwrap">
+      <div class="watch" id="watch" role="status" aria-live="assertive">
+        <div class="dot"></div>
+        <div class="lvl" id="wl">Green: Safe</div>
+        <div class="msg" id="wm">All readings normal. Climb on.</div>
+      </div>
+    </div>
+    <div class="leds" aria-hidden="true"><span class="led g on" id="lg"></span><span class="led y" id="ly"></span><span class="led r" id="lr"></span></div>
+    <div class="btns" style="justify-content:center">
+      <button class="primary" id="sound">Turn on voice and sound</button>
+    </div>
+    <p class="status" id="outs">Outputs: green LED</p>
+    <div class="net" aria-label="Network status">
+      <span class="chip off">Wi-Fi: off</span><span class="chip off">Mobile signal: none</span><span class="chip ok">Bluetooth: connected</span><span class="chip ok">LoRa radio: ready</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-rx">
+    <h2 id="h-rx">4. Receivers (reached by long-range radio)</h2>
+    <div class="rx" id="rx1"><h3>Team leader</h3><div class="state" id="rx1s">Waiting. No alerts.</div></div>
+    <div class="rx" id="rx2"><h3>Base camp</h3><div class="state" id="rx2s">Waiting. No alerts.</div></div>
+    <div class="row"><label for="solorx">Solo mode: send SOS to</label>
+      <select id="solorx" style="font:inherit;padding:6px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink)">
+        <option value="1">Team leader</option><option value="2">Base camp</option>
+      </select></div>
+    <p class="status">Team mode sends the SOS to both receivers. Solo mode sends it to the one you pick.</p>
+  </section>
+
+  <section class="wide" aria-labelledby="h-log">
+    <h2 id="h-log">Event log</h2>
+    <ul class="log" id="log"></ul>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
